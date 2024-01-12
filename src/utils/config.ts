@@ -1,16 +1,21 @@
 import { http, createConfig } from "@wagmi/core";
-import { mainnet, sepolia } from "@wagmi/core/chains";
+import { mainnet, polygon } from "@wagmi/core/chains";
 import { createPublicClient } from "viem";
 
 export const config = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [mainnet, polygon],
   transports: {
     [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [polygon.id]: http(),
   },
 });
 
-export const publicClient = createPublicClient({
+export const ethereumPublicClient = createPublicClient({
   chain: mainnet,
+  transport: http(),
+});
+
+export const polygonPublicClient = createPublicClient({
+  chain: polygon,
   transport: http(),
 });

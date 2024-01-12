@@ -16,7 +16,6 @@ import { Card } from "@/components/ui/card";
 import { createRoom } from "@/components/createRoom";
 import { useRouter } from "next/navigation";
 
-
 export default function Home() {
   const [tokenGateWith, setTokenGateWith] = useState("ERC20");
   const [chain, setChain] = useState("ETHEREUM");
@@ -64,16 +63,6 @@ export default function Home() {
                 />
                 <Label className="text-gray-300" htmlFor="erc721">
                   ERC721
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  id="erc1155"
-                  value="ERC1155"
-                  onClick={() => setTokenGateWith("ERC1155")}
-                />
-                <Label className="text-gray-300" htmlFor="erc1155">
-                  ERC1155
                 </Label>
               </div>
             </RadioGroup>

@@ -1,4 +1,4 @@
-import { publicClient } from "@/utils/config";
+import { ethereumPublicClient, polygonPublicClient } from "@/utils/config";
 import { AccessToken, Role } from "@huddle01/server-sdk/auth";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +15,26 @@ export async function POST(request: Request) {
     return new Response("Signature expired", { status: 400 });
   }
 
+  const roomDetailsResponse = await fetch(
+    `https://api.huddle01.com/api/v1/room-details/${roomId}`,
+    {
+      headers: {
+        "x-api-key": process.env.API_KEY!,
+      },
+    }
+  );
+
+  const roomDetails = await roomDetailsResponse.json();
+
+  if (!roomDetails?.tokenGatingInfo) {
+    return new Response("Room is not token gated", { status: 400 });
+  }
+
+  const publicClient =
+    roomDetails.tokenGatingInfo.tokenGatingConditions[0].chain === "ETHEREUM"
+      ? ethereumPublicClient
+      : polygonPublicClient;
+
   const verify = await publicClient.verifyMessage({
     address,
     message,
@@ -23,7 +43,8 @@ export async function POST(request: Request) {
 
   if (verify) {
     const contractResponse = await publicClient.readContract({
-      address: "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85",
+      address:
+        roomDetails.tokenGatingInfo.tokenGatingConditions[0].contractAddress,
       abi: [
         {
           inputs: [{ name: "owner", type: "address" }],
